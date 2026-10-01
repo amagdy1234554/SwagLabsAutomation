@@ -1,30 +1,53 @@
 package Pages.CartPage;
 
-import org.openqa.selenium.By;
+import Pages.InventoryPage.InventoryPageHelper;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import utils.Actions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CartPageHelper extends CartPageElement {
-    private Actions actions;
+public class CartPageHelper extends Actions {
+    private final CartPageElement cartPageElement;
+    private final InventoryPageHelper inventoryPageHelper;
+    public Double sumPrice;
 
-    public List<String> getItemNames() {
-        List<String> names = new ArrayList<>();
-        for (WebElement element : actions.findElements(itemName)) {
-            names.add(element.getText().trim());
+    public CartPageHelper(WebDriver driver) {
+        super(driver);
+        cartPageElement = new CartPageElement();
+        inventoryPageHelper = new InventoryPageHelper(driver);
+    }
+    public int getCartItemCount() {
+        waitForElementVis(cartPageElement.cartItemCount);
+        List<WebElement> elements = findElements(cartPageElement.cartItemCount);
+        return elements.size();
+    }
+    public void assertNumberOfItemsInCart(int numberOfItems) {
+        Assert.assertEquals(getCartItemCount(), numberOfItems);
+    }
+    public void clickRemoveFromCartButton() {
+        waitForElementClick(cartPageElement.removeBtn);
+        List<WebElement> buttons = findElements(cartPageElement.removeBtn);
+        buttons.get(0).click();
+    }
+    public void clickContinueShoppingButton() {
+        waitForElementClick(cartPageElement.continueBtn);
+        clickElement(cartPageElement.continueBtn);
+    }
+    public void clickCheckOutButton() {
+        waitForElementClick(cartPageElement.checkOut);
+        clickElement(cartPageElement.checkOut);
+    }
+    public Double getSumOfTwoProductPrice(){
+        List<Double> values = new ArrayList<>();
+        for (WebElement element :findElements(cartPageElement.productPrice)) {
+            values.add(Double.parseDouble(element.getText().replace("$", "").trim()));
         }
-        return names;
+        return sumPrice = values.get(0)+values.get(1);
     }
-
-    public void removeProductByName(String productName) {
-        String id = "remove-" + productName.toLowerCase()
-                .replace(" ", "-");
-        actions.click(By.id(id));
-    }
-
-    public void clickCheckout() {
-        actions.click(checkOut);
+    public void assertSumProductPriceCorrect(){
+        Assert.assertEquals(inventoryPageHelper.getSumOfTwoProductPrice(),getSumOfTwoProductPrice());
     }
 }

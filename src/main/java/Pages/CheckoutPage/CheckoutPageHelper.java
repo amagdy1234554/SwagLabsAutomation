@@ -1,46 +1,30 @@
 package Pages.CheckoutPage;
 
+import org.openqa.selenium.WebDriver;
 import utils.Actions;
 
-public class CheckoutPageHelper extends CheckoutPageElement{
-    private Actions actions;
+public class CheckoutPageHelper extends Actions {
+    private final CheckoutPageElement checkoutPageElement;
 
-    public void enterCustomerInfo(String firstName, String lastName, String postalCode) {
-        actions.fillText(firstNameTxt, firstName);
-        actions.fillText(lastNameTxt, lastName);
-        actions.fillText(postalCodeTxt, postalCode);
+    public CheckoutPageHelper(WebDriver driver) {
+        super(driver);
+        checkoutPageElement = new CheckoutPageElement();
     }
-
-    public void continueCheckout() {
-        actions.click(continueBtn);
+    public void enterValidCustomerInformation(String firstName, String lastName, String postalCode) {
+        fillFirstNameTxt(firstName);
+        fillLastNameTxt(lastName);
+        fillPostalCodeTxt(postalCode);
     }
-
-    public String getErrorMessage() {
-        return actions.getText(errorMessage);
+    public void clickContinueBtn() {
+        clickElement(checkoutPageElement.continueBtn);
     }
-
-    public String getSubtotal() {
-        return actions.getText(subTotal);
+    public void fillFirstNameTxt(String firstName) {
+        fillElement(checkoutPageElement.firstNameTxt, firstName);
     }
-
-    public String getTax() {
-        return actions.getText(tax);
+    public void fillLastNameTxt(String lastName) {
+        fillElement(checkoutPageElement.lastNameTxt, lastName);
     }
-
-    public String getTotal() {
-        return actions.getText(totalFinal);
-    }
-
-    public int getSummaryItemCount() {
-        return actions.findElements(summaryContact).size();
-    }
-
-    public void finish() {
-        actions.click(finishBtn);
-    }
-
-    public String getConfirmationMessage() {
-        return actions.getText(confirmMessage);
+    public void fillPostalCodeTxt(String postalCode) {
+        fillElement(checkoutPageElement.postalCodeTxt, postalCode);
     }
 }
-
